@@ -46,6 +46,19 @@ export async function fetchTopPlayers(limit) {
   }
 }
 
+export async function fetchTopPlayersInClub(clubId) {
+  try {
+    const response = await apiClient.get(`/players/club/${clubId}/top`);
+    return response.data.map(p => ({
+      id: p.id,
+      name: (p.eesnimi ?? '') + ' ' + (p.perenimi ?? ''),
+      ranking: p.ranking,
+    }));
+  } catch (error) {
+    console.error('Error fetching top players in club', error);
+  }
+}
+
 export async function addPlayer(player) {
   try {
     await apiClient.post('/players', player);

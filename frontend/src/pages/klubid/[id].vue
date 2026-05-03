@@ -48,6 +48,35 @@
         </v-col>
       </v-row>
 
+      <v-row v-if="topPlayers.length">
+        <v-col cols="12" md="8">
+          <h2 class="mb-2">TOP mängijad</h2>
+          <v-row>
+            <v-col cols="12" v-for="(player, index) in topPlayers" :key="player.id">
+              <v-card>
+                <v-card-title>
+                  <v-row align="center">
+                    <v-col cols="8">
+                      <v-chip :color="getChipColor(index)" class="ma-2" label>{{ index + 1 }}</v-chip>
+                      {{ player.name }}
+                    </v-col>
+                    <v-col cols="4" class="text-right points">
+                      {{ player.ranking }}
+                    </v-col>
+                  </v-row>
+                </v-card-title>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row cols="12" md="8">
+        <v-col>
+          <v-divider :thickness="3"></v-divider>
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col>
           <PlayersSearchTable :club-id="clubId" />
@@ -68,6 +97,7 @@
 
 <script>
 import {fetchClubById} from "@/wrapper/clubsApiWrapper.js";
+import {fetchTopPlayersInClub} from "@/wrapper/playersApiWrapper.js";
 import PlayersSearchTable from "@/components/clubs/PlayersSearchTable.vue";
 import AddClubDialog from "@/components/clubs/AddClubDialog.vue";
 import ModifyClubForm from "@/components/clubs/ModifyClubForm.vue";
@@ -83,6 +113,7 @@ export default {
     return {
       club: null,
       clubId: null,
+      topPlayers: [],
       showModifyClubDialog: false,
     }
   },
@@ -97,6 +128,15 @@ export default {
   methods: {
     async fetchClubData() {
       this.club = await fetchClubById(this.clubId)
+      this.topPlayers = await fetchTopPlayersInClub(this.clubId) ?? []
+    },
+    getChipColor(index) {
+      switch (index) {
+        case 0: return 'gold';
+        case 1: return 'silver';
+        case 2: return 'bronze';
+        default: return 'primary';
+      }
     },
     openModifyClubDialog() {
       this.showModifyClubDialog = true;

@@ -179,7 +179,7 @@ function getAddOrUpdatePlayerQuery(isUpdate) {
             $5,
             $6)
         WHERE id = $7
-        `
+        `;
     } else {
         return `
         INSERT INTO isikud (eesnimi, perenimi, klubis, synniaeg, sugu, ranking)
@@ -189,14 +189,14 @@ function getAddOrUpdatePlayerQuery(isUpdate) {
             $4,
             $5,
             $6)
-        `
+        `;
     }
 }
 
 const DELETE_PLAYER = `
     DELETE FROM isikud i
     WHERE i.id = $1
-`
+`;
 
 const SELECT_ALL_TOURNAMENTS = `
   SELECT t.id, t.nimi, t.alguskuupaev, t.loppkuupaev, a.nimi AS toimumiskoht FROM turniirid t
@@ -226,7 +226,7 @@ function getAddOrUpdateTournamentQuery(isUpdate) {
             $3,
             $4)
         WHERE id = ($5)
-        `
+        `;
     } else {
         return `
           INSERT INTO turniirid (nimi, asula, alguskuupaev, loppkuupaev)
@@ -234,14 +234,14 @@ function getAddOrUpdateTournamentQuery(isUpdate) {
                  (SELECT id FROM asulad WHERE nimi = $2),
                  $3,
                  $4)
-        `
+        `;
     }
 }
 
 const DELETE_TOURNAMENT = `
     DELETE FROM turniirid t
     WHERE t.id = $1
-`
+`;
 
 const SELECT_ALL_CLUBS = `
     SELECT k.*, COUNT(i.id) as members, ROUND(AVG(i.ranking), 1) as average_rating
@@ -277,7 +277,7 @@ function getAddOrUpdateClubQuery(isUpdate) {
             ($1,
             (SELECT id FROM asulad WHERE nimi = $2))
         WHERE id = $3
-        `
+        `;
     } else {
         return `
             INSERT INTO klubid (nimi, asula)
@@ -285,14 +285,18 @@ function getAddOrUpdateClubQuery(isUpdate) {
                 ($1,
                 (SELECT id FROM asulad WHERE nimi = $2))
             RETURNING id
-        `
+        `;
     }
 }
 
 const DELETE_CLUB = `
     DELETE FROM klubid k
     WHERE k.id = $1
-`
+`;
+
+const SELECT_TOP_PLAYERS_IN_CLUB = `
+    SELECT * FROM f_klubiparimad($1)
+`;
 
 module.exports = {
     SELECT_MATCH_BY_ID,
@@ -316,4 +320,5 @@ module.exports = {
     SELECT_TOP_CLUBS,
     getAddOrUpdateClubQuery,
     DELETE_CLUB,
+    SELECT_TOP_PLAYERS_IN_CLUB,
 };
