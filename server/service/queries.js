@@ -295,7 +295,7 @@ const DELETE_CLUB = `
 `;
 
 const SELECT_TOP_PLAYERS_IN_CLUB = `
-    SELECT * FROM f_klubiparimad($1)
+    SELECT * FROM f_klubiparimad((SELECT nimi FROM klubid WHERE id = $1))
 `;
 
 module.exports = {
